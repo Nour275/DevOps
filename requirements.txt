@@ -1,0 +1,9 @@
+flask
+flask-mysqldb
+flask-bcrypt
+pyjwt
+flask_sqlalchemy
+mysql-connector-python
+pandas
+scikit-learn
+
