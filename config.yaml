@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: devops-multi-container-pod
+spec:
+  containers:
+    - name: mysql
+      image: mysql:8
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        - name: MYSQL_DATABASE
+          value: devopsdb
+      volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+
+    - name: backend
+      image: devops-backend:latest
+      ports:
+        - containerPort: 5000
+      env:
+        - name: DB_HOST
+          value: localhost
+        - name: DB_USER
+          value: root
+        - name: DB_PASSWORD
+          value: root
+        - name: DB_NAME
+          value: devopsdb
+
+    - name: nginx
+      image: nginx:alpine
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
+          readOnly: true
+
+    - name: adminer
+      image: adminer
+      ports:
+        - containerPort: 8080
+
+  volumes:
+    - name: mysql-data
+      emptyDir: {}
+    - name: nginx-config
+      configMap:
+        name: nginx-config
